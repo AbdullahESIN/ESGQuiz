@@ -1,50 +1,108 @@
-# Welcome to your Expo app 👋
+# ESG Quiz App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native quiz application built with Expo Router for ESG (Environmental, Social, Governance) Investment Analysis study questions.
 
-## Get started
+## Features
 
-1. Install dependencies
+- 📱 **Multiple Choice Quiz**: Interactive quiz with 72 questions from BA/ECON 470 course
+- 🎯 **Customizable Question Count**: Choose to answer all questions or limit to a specific number
+- 🔀 **Shuffle Mode**: Randomize question order for varied practice sessions
+- ⏱️ **Timer**: Track your quiz completion time
+- 📊 **Score Tracking**: See your score and percentage at the end
+- 💡 **Explanations**: Learn from detailed explanations for each question
+- 🎨 **Safe Area Support**: Properly handles iPhone Dynamic Island and notches
+- 🔄 **Main Menu**: Return to start screen anytime during quiz
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- **React Native** with **Expo Router**
+- **TypeScript**
+- **React Native Safe Area Context**
 
-   ```bash
-   npx expo start
-   ```
+## Getting Started
 
-In the output, you'll find options to open the app in a
+### Prerequisites
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js (v18 or later)
+- npm or yarn
+- Expo CLI (optional, can use npx)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Installation
 
-## Get a fresh project
-
-When you're ready, run:
-
+1. Clone the repository:
 ```bash
-npm run reset-project
+git clone <your-repo-url>
+cd ESGQuiz
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Install dependencies:
+```bash
+npm install
+```
 
-## Learn more
+3. Start the development server:
+```bash
+npx expo start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+4. Run on your preferred platform:
+   - Press `i` for iOS simulator
+   - Press `a` for Android emulator
+   - Scan QR code with Expo Go app on your phone
+   - Press `w` for web browser
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Project Structure
 
-## Join the community
+```
+ESGQuiz/
+├── app/                    # Expo Router app directory
+│   ├── (tabs)/            # Tab navigation screens
+│   │   └── index.tsx      # Main quiz screen
+│   └── _layout.tsx         # Root layout with SafeAreaProvider
+├── assets/                 # Static assets
+│   └── Study_Questions_LMS_Part2_72_MC.json  # Quiz questions data
+└── components/             # Reusable components
+```
 
-Join our community of developers creating universal apps.
+## Usage
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. **Start Screen**: 
+   - Toggle "Shuffle Questions" to randomize order
+   - Optionally enable "Limit Number of Questions" and select desired count
+   - Click "Start Quiz" to begin
+
+2. **Quiz Screen**:
+   - Answer questions by selecting A, B, C, or D
+   - View explanations after answering
+   - Use "Main Menu" button to return to start
+   - Timer tracks elapsed time
+
+3. **Results Screen**:
+   - View your score and percentage
+   - See total time taken
+   - Click "Restart Quiz" to start over
+
+## Data Source
+
+Questions are loaded from `assets/Study_Questions_LMS_Part2_72_MC.json` which contains:
+- 72 multiple choice questions
+- 4 choices per question (A, B, C, D)
+- Correct answers and explanations
+
+## Development
+
+### Available Scripts
+
+- `npm start` - Start Expo development server
+- `npm run android` - Run on Android
+- `npm run ios` - Run on iOS
+- `npm run web` - Run on web
+- `npm run lint` - Run ESLint
+
+## License
+
+This project is for educational purposes.
+
+## Author
+
+Created for BA/ECON 470 - ESG Investment Analysis course study purposes.
