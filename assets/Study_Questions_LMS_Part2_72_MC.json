@@ -455,7 +455,7 @@
       ],
       "answer": {
         "option": "B",
-        "text": "Risks associated with environmental, societal, and governmental factors that can impact"
+        "text": "Risks associated with environmental, societal, and governmental factors that can impact financial performance."
       },
       "explanation": "ESG risks refer to the risks associated with Environmental, Social, and Governance factors that can affect the financial performance of an investment. These factors include issues such as climate change, human rights practices, and corporate governance standards."
     },
@@ -539,7 +539,7 @@
       ],
       "answer": {
         "option": "B",
-        "text": "ESG analysis provides insights into potential risks and opportunities that may impact long-"
+        "text": "ESG analysis provides insights into potential risks and opportunities that may impact long- term financial performance."
       },
       "explanation": "Integrating ESG analysis into investment decisions helps investors identify potential risks and opportunities related to environmental, social, and governance factors that can impact the long-term financial performance of investments. This approach supports sustainable investing practices and risk management strategies."
     },
@@ -791,7 +791,7 @@
       ],
       "answer": {
         "option": "B",
-        "text": "They arise from indirect activities across the value chain that are outside the organization’s"
+        "text": "They arise from indirect activities across the value chain that are outside the organization’s direct control"
       },
       "explanation": "Scope 3 emissions occur across the value chain and are outside direct control but influenced by organizational decisions, making them difficult to measure and reduce."
     },
@@ -931,7 +931,7 @@
       ],
       "answer": {
         "option": "B",
-        "text": "The maximum amount of carbon dioxide that can be emitted to limit global warming to a"
+        "text": "The maximum amount of carbon dioxide that can be emitted to limit global warming to a certain level"
       },
       "explanation": "A carbon budget represents the maximum amount of carbon dioxide emissions that can be released into the atmosphere while still meeting specific climate targets, such as limiting global warming to 1.5 or 2 degrees Celsius above pre-industrial levels."
     },
@@ -1267,7 +1267,7 @@
       ],
       "answer": {
         "option": "B",
-        "text": "Assets that become economically unviable or obsolete due to changes in market preferences"
+        "text": "Assets that become economically unviable or obsolete due to changes in market preferences or regulations related to climate change"
       },
       "explanation": "Stranded assets refer to assets, particularly fossil fuel reserves that may become economically unviable or obsolete due to changes in market preferences, technological advancements, or regulations aimed at mitigating climate change impacts, such as carbon pricing or emissions regulations."
     },
@@ -1435,7 +1435,7 @@
       ],
       "answer": {
         "option": "B",
-        "text": "Risks arising from both the physical impacts of climate change and the transition to a low-"
+        "text": "Risks arising from both the physical impacts of climate change and the transition to a low- carbon economy"
       },
       "explanation": "In ESG investing, climate risk includes both physical risks (such as extreme weather events and long-term climate changes) and transition risks arising from policy, regulatory, technological, and market shifts toward a low-carbon economy."
     },
@@ -1463,7 +1463,7 @@
       ],
       "answer": {
         "option": "B",
-        "text": "Global warming increases the frequency and intensity of extreme weather events,"
+        "text": "Global warming increases the frequency and intensity of extreme weather events, amplifying climate risk."
       },
       "explanation": "Global warming exacerbates climate risk by leading to more frequent and severe weather events, such as hurricanes, heatwaves, and floods. These events pose greater risks to investments, particularly in sectors vulnerable to climate-related disruptions."
     },
@@ -1519,7 +1519,7 @@
       ],
       "answer": {
         "option": "C",
-        "text": "Climate regulations incentivize investments in environmentally sustainable practices and"
+        "text": "Climate regulations incentivize investments in environmentally sustainable practices and technologies."
       },
       "explanation": "Climate regulations play a significant role in shaping investment decisions within ESG analysis by encouraging investments in environmentally sustainable practices and technologies. Investors may seek opportunities aligned with regulatory frameworks promoting climate resilience and emission reduction targets."
     },
@@ -1575,7 +1575,7 @@
       ],
       "answer": {
         "option": "B",
-        "text": "Ignoring climate risk and regulations may lead to missed investment opportunities and"
+        "text": "Ignoring climate risk and regulations may lead to missed investment opportunities and increased portfolio vulnerabilities."
       },
       "explanation": "Considering climate risk and regulations in ESG investing is essential to identify potential risks, seize opportunities, and build resilient portfolios. Ignoring these factors may result in missed opportunities for sustainable investments and heightened exposure to climate-related disruptions, which could adversely affect financial returns."
     },
@@ -1715,9 +1715,9 @@
       ],
       "answer": {
         "option": "C",
-        "text": "It sets out key concepts and requirements for sustainability reportingExplanation: IFRS S1"
+        "text": "It sets out key concepts and requirements for sustainability reporting"
       },
-      "explanation": ""
+      "explanation": "IFRS S1 provides important guidance on materiality assessment, qualitative characteristics of information, and reporting requirements, which are essential when applying IFRS S2 for climate-related disclosures."
     },
     {
       "id": 62,
@@ -1855,7 +1855,7 @@
       ],
       "answer": {
         "option": "C",
-        "text": "Assessing both financial impacts on the company and the company's impacts on the"
+        "text": "Assessing both financial impacts on the company and the company's impacts on the environment and society"
       },
       "explanation": "Double materiality involves evaluating both financial materiality (impacts on the company) and impact materiality (impacts on the environment and society) to provide a comprehensive assessment."
     },
@@ -1911,7 +1911,7 @@
       ],
       "answer": {
         "option": "C",
-        "text": "To determine which sustainability issues are significant to the company's financial"
+        "text": "To determine which sustainability issues are significant to the company's financial performance and broader impact"
       },
       "explanation": "Materiality helps companies identify which sustainability issues are significant to their financial performance and broader impact on the environment and society, guiding reporting, strategy, and resource allocation."
     },
@@ -1939,7 +1939,7 @@
       ],
       "answer": {
         "option": "C",
-        "text": "Assessing both the financial effects of sustainability risks and opportunities and the"
+        "text": "Assessing both the financial effects of sustainability risks and opportunities and the company's impact on the environment and society"
       },
       "explanation": "Double materiality assessment involves evaluating both financial materiality and impact materiality to provide a comprehensive understanding of a company's sustainability performance."
     },
