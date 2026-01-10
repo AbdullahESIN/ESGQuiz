@@ -1,3 +1,4 @@
+import { useQuizHistory } from '@/contexts/QuizHistoryContext';
 import { useEffect, useRef, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,7 +22,7 @@ interface QuizData {
   questions: Question[];
 }
 
-type ViewState = 'start' | 'quiz' | 'end';
+type ViewState = 'start' | 'quiz' | 'end' | 'review';
 
 export default function HomeScreen() {
   const [viewState, setViewState] = useState<ViewState>('start');
@@ -36,7 +37,10 @@ export default function HomeScreen() {
   const [score, setScore] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<Map<number, 'A' | 'B' | 'C' | 'D'>>(new Map());
+  const [wrongQuestions, setWrongQuestions] = useState<Question[]>([]);
   const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { addQuizResult } = useQuizHistory();
   
   const insets = useSafeAreaInsets();
 
@@ -52,8 +56,10 @@ export default function HomeScreen() {
 
   // Start timer when quiz starts
   useEffect(() => {
-    if (viewState === 'quiz') {
-      setElapsedSeconds(0);
+    if (viewState === 'quiz' || viewState === 'review') {
+      if (viewState === 'quiz') {
+        setElapsedSeconds(0);
+      }
       timerIntervalRef.current = setInterval(() => {
         setElapsedSeconds(prev => prev + 1);
       }, 1000);
@@ -63,7 +69,9 @@ export default function HomeScreen() {
         clearInterval(timerIntervalRef.current);
         timerIntervalRef.current = null;
       }
-      setElapsedSeconds(0);
+      if (viewState === 'start' || viewState === 'end') {
+        setElapsedSeconds(0);
+      }
     }
 
     return () => {
@@ -110,6 +118,8 @@ export default function HomeScreen() {
     setShowExplanation(false);
     setScore(0);
     setElapsedSeconds(0);
+    setUserAnswers(new Map());
+    setWrongQuestions([]);
     setViewState('quiz');
   };
 
@@ -120,12 +130,19 @@ export default function HomeScreen() {
     setShowExplanation(true);
     
     const currentQuestion = questions[currentIndex];
+    // Kullanıcının cevabını kaydet
+    setUserAnswers(prev => {
+      const newMap = new Map(prev);
+      newMap.set(currentQuestion.id, option);
+      return newMap;
+    });
+    
     if (option === currentQuestion.answer.option) {
       setScore(prevScore => prevScore + 1);
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setSelectedOption(null);
@@ -136,6 +153,35 @@ export default function HomeScreen() {
         clearInterval(timerIntervalRef.current);
         timerIntervalRef.current = null;
       }
+      // Yanlış yapılan soruları bul
+      const wrong = questions.filter(q => {
+        const userAnswer = userAnswers.get(q.id);
+        return userAnswer !== q.answer.option;
+      });
+      setWrongQuestions(wrong);
+      
+      // Quiz sonuçlarını kaydet
+      const quizQuestions = questions.map(q => ({
+        id: q.id,
+        question: q.question,
+        userAnswer: userAnswers.get(q.id) || null,
+        correctAnswer: q.answer.option,
+        isCorrect: userAnswers.get(q.id) === q.answer.option,
+      }));
+
+      try {
+        await addQuizResult({
+          score,
+          totalQuestions: questions.length,
+          percentage: Math.round((score / questions.length) * 100),
+          timeSeconds: elapsedSeconds,
+          wrongAnswers: wrong.length,
+          questions: quizQuestions,
+        });
+      } catch (error) {
+        console.error('Error saving quiz result:', error);
+      }
+      
       setViewState('end');
     }
   };
@@ -147,10 +193,27 @@ export default function HomeScreen() {
     setShowExplanation(false);
     setScore(0);
     setElapsedSeconds(0);
+    setUserAnswers(new Map());
+    setWrongQuestions([]);
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
       timerIntervalRef.current = null;
     }
+  };
+
+  const handleReviewWrongAnswers = () => {
+    if (wrongQuestions.length === 0) {
+      Alert.alert('No Wrong Answers', 'You answered all questions correctly!');
+      return;
+    }
+    setQuestions(wrongQuestions);
+    setCurrentIndex(0);
+    setSelectedOption(null);
+    setShowExplanation(false);
+    setScore(0);
+    setElapsedSeconds(0);
+    setUserAnswers(new Map());
+    setViewState('review');
   };
 
   const handleMainMenu = () => {
@@ -210,18 +273,10 @@ export default function HomeScreen() {
   const currentQuestion = questions[currentIndex];
   const isCorrect = selectedOption === currentQuestion?.answer.option;
 
-  // Safe area padding style
-  const safeAreaStyle = {
-    paddingTop: insets.top,
-    paddingBottom: insets.bottom,
-    paddingLeft: insets.left,
-    paddingRight: insets.right,
-  };
-
   // Start View
   if (viewState === 'start') {
     return (
-      <SafeAreaView style={[styles.container, safeAreaStyle]} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <Text style={styles.title}>{data.title}</Text>
           <Text style={styles.subtitle}>{data.question_count} questions available</Text>
@@ -286,7 +341,7 @@ export default function HomeScreen() {
   // End View
   if (viewState === 'end') {
     return (
-      <SafeAreaView style={[styles.container, safeAreaStyle]} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <Text style={styles.title}>Quiz Complete!</Text>
           <Text style={styles.scoreText}>
@@ -299,6 +354,20 @@ export default function HomeScreen() {
             Time: {formatTime(elapsedSeconds)}
           </Text>
           
+          {wrongQuestions.length > 0 && (
+            <View style={styles.wrongAnswersInfo}>
+              <Text style={styles.wrongAnswersText}>
+                Wrong Answers: {wrongQuestions.length}
+              </Text>
+            </View>
+          )}
+          
+          {wrongQuestions.length > 0 && (
+            <TouchableOpacity style={styles.reviewButton} onPress={handleReviewWrongAnswers}>
+              <Text style={styles.reviewButtonText}>Review Wrong Answers</Text>
+            </TouchableOpacity>
+          )}
+          
           <TouchableOpacity style={styles.restartButton} onPress={handleRestart}>
             <Text style={styles.restartButtonText}>Restart Quiz</Text>
           </TouchableOpacity>
@@ -307,10 +376,144 @@ export default function HomeScreen() {
     );
   }
 
+  // Review View (yanlış soruları tekrar çözme)
+  if (viewState === 'review') {
+    const handleReviewNext = () => {
+      if (currentIndex < questions.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+        setSelectedOption(null);
+        setShowExplanation(false);
+      } else {
+        // Review bittiğinde end view'a dön
+        if (timerIntervalRef.current) {
+          clearInterval(timerIntervalRef.current);
+          timerIntervalRef.current = null;
+        }
+        // Review'deki yeni cevapları kontrol et
+        const newWrong = questions.filter(q => {
+          const userAnswer = userAnswers.get(q.id);
+          return userAnswer !== q.answer.option;
+        });
+        setWrongQuestions(newWrong);
+        setViewState('end');
+      }
+    };
+
+    const handleReviewBackToEnd = () => {
+      Alert.alert(
+        'Exit Review?',
+        'Your progress will be saved.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Exit',
+            onPress: () => {
+              if (timerIntervalRef.current) {
+                clearInterval(timerIntervalRef.current);
+                timerIntervalRef.current = null;
+              }
+              const newWrong = questions.filter(q => {
+                const userAnswer = userAnswers.get(q.id);
+                return userAnswer !== q.answer.option;
+              });
+              setWrongQuestions(newWrong);
+              setViewState('end');
+            },
+          },
+        ]
+      );
+    };
+
+    return (
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+        <View style={styles.quizHeader}>
+          <TouchableOpacity style={styles.mainMenuButton} onPress={handleReviewBackToEnd}>
+            <Text style={styles.mainMenuButtonText}>Exit Review</Text>
+          </TouchableOpacity>
+          <Text style={styles.timerText}>{formatTime(elapsedSeconds)}</Text>
+        </View>
+        
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.reviewBadge}>
+            <Text style={styles.reviewBadgeText}>Review Mode</Text>
+          </View>
+          
+          <View style={styles.progressContainer}>
+            <Text style={styles.progressText}>
+              Question {currentIndex + 1} of {questions.length}
+            </Text>
+          </View>
+
+          <Text style={styles.questionText}>{currentQuestion.question}</Text>
+
+          <View style={styles.choicesContainer}>
+            {currentQuestion.choices.map((choice) => {
+              const isSelected = selectedOption === choice.option;
+              const isCorrectAnswer = choice.option === currentQuestion.answer.option;
+              let buttonStyle: ViewStyle | ViewStyle[] = styles.choiceButton;
+              let textStyle: TextStyle | TextStyle[] = styles.choiceButtonText;
+
+              if (selectedOption !== null) {
+                if (isCorrectAnswer) {
+                  buttonStyle = [styles.choiceButton, styles.correctButton] as ViewStyle[];
+                  textStyle = [styles.choiceButtonText, styles.correctButtonText] as TextStyle[];
+                } else if (isSelected && !isCorrectAnswer) {
+                  buttonStyle = [styles.choiceButton, styles.incorrectButton] as ViewStyle[];
+                  textStyle = [styles.choiceButtonText, styles.incorrectButtonText] as TextStyle[];
+                } else {
+                  buttonStyle = [styles.choiceButton, styles.disabledButton] as ViewStyle[];
+                  textStyle = [styles.choiceButtonText, styles.disabledButtonText] as TextStyle[];
+                }
+              }
+
+              return (
+                <TouchableOpacity
+                  key={choice.option}
+                  style={buttonStyle}
+                  onPress={() => handleAnswer(choice.option)}
+                  disabled={selectedOption !== null}
+                >
+                  <Text style={textStyle}>
+                    {choice.option}. {choice.text}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {showExplanation && (
+            <View style={styles.explanationContainer}>
+              <Text style={styles.resultText}>
+                {isCorrect ? '✓ Correct!' : '✗ Incorrect'}
+              </Text>
+              <Text style={styles.explanationText}>
+                {currentQuestion.explanation}
+              </Text>
+              <Text style={styles.answerText}>
+                Correct answer: {currentQuestion.answer.option}
+              </Text>
+            </View>
+          )}
+
+          {showExplanation && (
+            <TouchableOpacity style={styles.nextButton} onPress={handleReviewNext}>
+              <Text style={styles.nextButtonText}>
+                {currentIndex < questions.length - 1 ? 'Next Question' : 'Finish Review'}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
   // Quiz View
   return (
-    <SafeAreaView style={[styles.container, safeAreaStyle]} edges={['top', 'bottom']}>
-      <View style={[styles.quizHeader, { paddingTop: Math.max(insets.top, 10) }]}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <View style={styles.quizHeader}>
         <TouchableOpacity style={styles.mainMenuButton} onPress={handleMainMenu}>
           <Text style={styles.mainMenuButtonText}>Main Menu</Text>
         </TouchableOpacity>
@@ -401,9 +604,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingBottom: 10,
+    paddingTop: 10,
+    paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+    backgroundColor: '#fff',
   },
   mainMenuButton: {
     paddingVertical: 8,
@@ -632,6 +837,46 @@ const styles = StyleSheet.create({
   restartButtonText: {
     color: '#fff',
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  wrongAnswersInfo: {
+    marginTop: 20,
+    marginBottom: 10,
+    padding: 12,
+    backgroundColor: '#fff3cd',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ffc107',
+  },
+  wrongAnswersText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#856404',
+    textAlign: 'center',
+  },
+  reviewButton: {
+    backgroundColor: '#28a745',
+    paddingHorizontal: 40,
+    paddingVertical: 15,
+    borderRadius: 8,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  reviewButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  reviewBadge: {
+    backgroundColor: '#ffc107',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginBottom: 20,
+  },
+  reviewBadgeText: {
+    color: '#856404',
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });
