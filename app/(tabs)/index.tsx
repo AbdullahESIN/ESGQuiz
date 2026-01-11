@@ -485,25 +485,28 @@ export default function HomeScreen() {
           </View>
 
           {showExplanation && (
-            <View style={styles.explanationContainer}>
-              <Text style={styles.resultText}>
-                {isCorrect ? '✓ Correct!' : '✗ Incorrect'}
-              </Text>
-              <Text style={styles.explanationText}>
-                {currentQuestion.explanation}
-              </Text>
-              <Text style={styles.answerText}>
-                Correct answer: {currentQuestion.answer.option}
-              </Text>
-            </View>
-          )}
-
-          {showExplanation && (
-            <TouchableOpacity style={styles.nextButton} onPress={handleReviewNext}>
-              <Text style={styles.nextButtonText}>
-                {currentIndex < questions.length - 1 ? 'Next Question' : 'Finish Review'}
-              </Text>
-            </TouchableOpacity>
+            <>
+              {isCorrect ? (
+                <View style={styles.correctMessageContainer}>
+                  <Text style={[styles.resultText, { marginBottom: 0, color: '#155724' }]}>✓ Correct!</Text>
+                </View>
+              ) : (
+                <View style={styles.explanationContainer}>
+                  <Text style={styles.resultText}>✗ Incorrect</Text>
+                  <Text style={styles.explanationText}>
+                    {currentQuestion.explanation}
+                  </Text>
+                  <Text style={styles.answerText}>
+                    Correct answer: {currentQuestion.answer.option}
+                  </Text>
+                </View>
+              )}
+              <TouchableOpacity style={styles.nextButton} onPress={handleReviewNext}>
+                <Text style={styles.nextButtonText}>
+                  {currentIndex < questions.length - 1 ? 'Next Question' : 'Finish Review'}
+                </Text>
+              </TouchableOpacity>
+            </>
           )}
         </ScrollView>
       </SafeAreaView>
@@ -565,25 +568,28 @@ export default function HomeScreen() {
         </View>
 
         {showExplanation && (
-          <View style={styles.explanationContainer}>
-            <Text style={styles.resultText}>
-              {isCorrect ? '✓ Correct!' : '✗ Incorrect'}
-            </Text>
-            <Text style={styles.explanationText}>
-              {currentQuestion.explanation}
-            </Text>
-            <Text style={styles.answerText}>
-              Correct answer: {currentQuestion.answer.option}
-            </Text>
-          </View>
-        )}
-
-        {showExplanation && (
-          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-            <Text style={styles.nextButtonText}>
-              {currentIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
-            </Text>
-          </TouchableOpacity>
+          <>
+            {isCorrect ? (
+              <View style={styles.correctMessageContainer}>
+                <Text style={styles.resultText}>✓ Correct!</Text>
+              </View>
+            ) : (
+              <View style={styles.explanationContainer}>
+                <Text style={styles.resultText}>✗ Incorrect</Text>
+                <Text style={styles.explanationText}>
+                  {currentQuestion.explanation}
+                </Text>
+                <Text style={styles.answerText}>
+                  Correct answer: {currentQuestion.answer.option}
+                </Text>
+              </View>
+            )}
+            <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+              <Text style={styles.nextButtonText}>
+                {currentIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
+              </Text>
+            </TouchableOpacity>
+          </>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -768,6 +774,15 @@ const styles = StyleSheet.create({
   },
   disabledButtonText: {
     color: '#6c757d',
+  },
+  correctMessageContainer: {
+    width: '100%',
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#d4edda',
+    borderRadius: 8,
+    marginBottom: 20,
+    alignItems: 'center',
   },
   explanationContainer: {
     width: '100%',
